@@ -3,10 +3,10 @@ import numpy as np
 # configurations
 lines = 5
 columns = 50
-timer = 15
-gears = 5
+# timer = 15
+gears = [3, 4, 5, 8, 10]
 car_number = 10
-use_rule = True
+use_rule = False
 
 # statistics
 finished_cars = 0

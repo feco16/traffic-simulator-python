@@ -2,7 +2,7 @@ import shared
 from simulate import one_clock
 
 repeats = 10000
-clock_timer = 10000
+clock_timer = 1000
 
 
 def calculate(case):
@@ -55,20 +55,23 @@ def car_number_with_rule(car_list, line):
         scores[index] = calculate("{} line with rule".format(line))
         index += 1
     print(scores)
-    print(sum(scores))
+    print(round(sum(scores) / len(scores), 3))
     return scores
 
 
 def car_number_no_rule(car_list, line):
     scores = [0] * len(car_list)
+    index=0
     for cars in car_list:
         shared.init_configuration()
         shared.lines = line
         shared.use_rule = False
         shared.car_number = cars
-        scores[cars] = calculate("{} line no rule".format(line))
+        scores[index] = calculate("{} line no rule".format(line))
+        index += 1
     print(scores)
-    print(sum(scores))
+    print(round(sum(scores) / len(scores), 3))
+    return scores
 
 # def test():
     # one_line()

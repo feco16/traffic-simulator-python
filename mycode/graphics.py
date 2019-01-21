@@ -1,9 +1,7 @@
-import random
-
 import pygame
+
 import shared
 import simulate
-
 from shared import cells
 
 pygame.init()
@@ -12,6 +10,7 @@ display_width = 1500
 display_height = 400
 
 car_width = 30
+car_height = 25
 road_height = 40
 road_y = 100
 
@@ -25,11 +24,18 @@ pygame.display.set_caption('Traffic simulator')
 clock = pygame.time.Clock()
 
 car_img = pygame.image.load('car.jpg')
-car_img = pygame.transform.scale(car_img, (car_width - 2, 20))
+car_img = pygame.transform.scale(car_img, (car_width - 3, 20))
 
 
 def car(x, y):
     game_display.blit(car_img, (x, y))
+
+
+def car_rect(x, y, gear):
+    min_speed = max(shared.gears)
+    pygame.draw.rect(game_display, pygame.Color((min_speed - gear) * 250 // min_speed, 0,
+                                                250 - (min_speed - gear) * 250 // min_speed),
+                     pygame.Rect((x, y), (car_width - 3, car_height)))
 
 
 def road(y):
@@ -53,7 +59,6 @@ def draw_map():
 
 
 def game_loop():
-
     while shared.finished_cars < 1000:
 
         for event in pygame.event.get():
@@ -71,7 +76,8 @@ def game_loop():
         for line in range(0, shared.lines):
             for cell in range(0, shared.columns):
                 if type(cells[line][cell]) == tuple:
-                    car(cell * car_width + 1, road_y + road_height * line + 5)
+                    # car(cell * car_width + 1, road_y + road_height * line + 5)
+                    car_rect(cell * car_width + 2, road_y + road_height * line + 5, cells[line][cell][1])
 
         pygame.display.update()
         clock.tick(10)

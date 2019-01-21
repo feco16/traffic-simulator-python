@@ -9,16 +9,16 @@ def add_car():
         chance = rand.randint(0, shared.count_zero(line))
         if chance > shared.car_number - shared.count_nonzero(line):
             continue
-        speed = rand.randint(1, shared.gears)
+        speed = rand.randint(0, len(shared.gears) - 1)
         if shared.cells[line][0] == 0:
-            shared.cells[line][0] = (shared.timer, speed, False)
+            shared.cells[line][0] = (shared.gears[speed], shared.gears[speed], False)
 
 
 def clock(line, rule):
     for cell_index in range(shared.columns - 1, -1, -1):
         cell = shared.cells[line][cell_index]
         if type(cell) == tuple:
-            cell = (cell[0] - cell[1], cell[1], False)
+            cell = (cell[0] - 1, cell[1], False)
             if cell[0] <= 0:
                 if cell_index == shared.columns - 1:
                     shared.cells[line][cell_index] = 0
@@ -26,7 +26,7 @@ def clock(line, rule):
                 else:
                     if shared.cells[line][cell_index + 1] == 0:
                         # there is space ahead - move forward
-                        shared.cells[line][cell_index + 1] = (shared.timer, shared.cells[line][cell_index][1], False)
+                        shared.cells[line][cell_index + 1] = (shared.cells[line][cell_index][1], shared.cells[line][cell_index][1], False)
                         shared.cells[line][cell_index] = 0
                         shared.forward_steps += 1
                     else:
