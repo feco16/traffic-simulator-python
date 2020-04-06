@@ -5,56 +5,24 @@ import shared
 
 pygame.init()
 
-display_width = 400
-display_height = 600
-
-ball_yy = int(shared.lines / 2)
-ball_xx = int(shared.columns / 2)
-
-base_width = 3
-
-start_map_x = 100
-start_map_y = 50
-
-handle_height = start_map_y + shared.lines
-
-button_pressed = False
-handle_delta = 0
-
-black = (0, 0, 0)
-white = (255, 255, 255)
-red = (255, 0, 0)
-green = (0, 128, 0)
-
-game_display = pygame.display.set_mode((display_width, display_height))
+game_display = pygame.display.set_mode((shared.display_width, shared.display_height))
 pygame.display.set_caption('Covid Ball')
 clock = pygame.time.Clock()
 
-direction = (1, 1)
-
 
 def game_loop():
-    global button_pressed
-
+    """ Loop until the game is exited"""
     game_map.create_map()
 
-    game_display.fill(green)
-
     while True:
-        game_display.fill(green)
-        draw_map(game_map.map_data)
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
-
+        game_display.fill(shared.green)
+        draw_map()
         try:
             move_ball()
         except:
+            print("STOP THE GAME. THE BALL CANNOT BE MOVED")
             break
-
-        pygame.draw.circle(game_display, black, (ball_xx + start_map_x, ball_yy + start_map_y), 5, 5)
+        draw_ball()
 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT]:
@@ -63,60 +31,77 @@ def game_loop():
         move_handles()
         draw_handles()
         pygame.display.update()
-        clock.tick(100000)
+
+        check_if_exited()
+
+        # pygame.time.wait(10)
+        clock.tick(100)
 
     while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
+        check_if_exited()
 
 
 def move_ball():
-    global ball_yy
-    global ball_xx
-    global direction
+    """ Move ball position according to the current direction"""
+    if game_map.is_direction_changed():
+        shared.direction = (
+            shared.direction[0] + game_map.map_data[shared.ball_yy + shared.direction[0]][
+                shared.ball_xx + shared.direction[1]][0],
+            shared.direction[1] + game_map.map_data[shared.ball_yy + shared.direction[0]][
+                shared.ball_xx + shared.direction[1]][1])
+        print("New direction: {}".format(shared.direction))
 
-    game_map.map_data
-
-    if game_map.map_data[ball_yy + direction[0]][ball_xx + direction[1]] != 0:
-        direction = (direction[0] + game_map.map_data[ball_yy + direction[0]][ball_xx + direction[1]][0],
-                     direction[1] + game_map.map_data[ball_yy + direction[0]][ball_xx + direction[1]][1] )
-
-    ball_yy += direction[0]
-    ball_xx += direction[1]
+    shared.ball_yy += shared.direction[0]
+    shared.ball_xx += shared.direction[1]
 
 
 def move_handles():
-    global button_pressed
-    global handle_delta
-
-    if button_pressed:
-        if handle_delta < (shared.handle_altitude * 0.8):
-            handle_delta += 2
+    """ Move handles according to the buttons pressed"""
+    if shared.button_pressed:
+        if shared.handle_delta < (shared.handle_altitude * 0.8):
+            shared.handle_delta += 2
         else:
-            button_pressed = False
+            shared.button_pressed = False
     else:
-        if handle_delta > 0:
-            handle_delta -= 2
+        if shared.handle_delta > 0:
+            shared.handle_delta -= 2
 
 
 def draw_handles():
-    left_handle_start = start_map_x + shared.left_space
-    right_handle_start = start_map_x + shared.left_space + shared.handle_width + shared.space_between_handles
+    left_handle_start = shared.start_map_x + shared.left_space
+    right_handle_start = shared.start_map_x + shared.left_space + shared.handle_width + shared.space_between_handles
 
-    pygame.draw.line(game_display, black, (left_handle_start, handle_height - shared.handle_altitude),
-                     (left_handle_start + shared.handle_width, handle_height - handle_delta), base_width)
+    pygame.draw.line(game_display, shared.black,
+                     (left_handle_start, shared.handle_height - shared.handle_altitude),
+                     (left_handle_start + shared.handle_width,
+                      shared.handle_height - shared.handle_delta),
+                     shared.base_width)
 
-    pygame.draw.line(game_display, black, (right_handle_start, handle_height - handle_delta),
-                     (right_handle_start + shared.handle_width, handle_height - shared.handle_altitude), base_width)
+    pygame.draw.line(game_display, shared.black,
+                     (right_handle_start, shared.handle_height - shared.handle_delta),
+                     (right_handle_start + shared.handle_width,
+                      shared.handle_height - shared.handle_altitude), shared.base_width)
 
 
-def draw_map(map_data):
+def draw_map():
     for i in range(0, shared.lines):
         for j in range(0, shared.columns):
-            if map_data[i][j] != 0:
-                pygame.draw.circle(game_display, black, (j + start_map_x, i + start_map_y), 2, 2)
+            if game_map.map_data[i][j] != 0:
+                pygame.draw.circle(game_display, shared.black,
+                                   (j + shared.start_map_x, i + shared.start_map_y), 2, 2)
+
+
+def draw_ball():
+    pygame.draw.circle(game_display, shared.black,
+                       (shared.ball_xx + shared.start_map_x, shared.ball_yy + shared.start_map_y),
+                       5, 5)
+
+
+def check_if_exited():
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            quit()
 
 
 game_loop()
