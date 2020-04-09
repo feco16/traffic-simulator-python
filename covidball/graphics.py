@@ -17,11 +17,11 @@ def game_loop():
     while True:
         game_display.fill(shared.green)
         draw_map()
-        try:
-            move_ball()
-        except:
-            print("STOP THE GAME. THE BALL CANNOT BE MOVED")
-            break
+        # try:
+        game_map.move_ball()
+        # except:
+        #     print("STOP THE GAME. THE BALL CANNOT BE MOVED")
+        #     break
         draw_ball()
 
         keys = pygame.key.get_pressed()
@@ -35,24 +35,12 @@ def game_loop():
         check_if_exited()
 
         # pygame.time.wait(10)
-        clock.tick(100)
+        clock.tick(500)
 
     while True:
         check_if_exited()
 
 
-def move_ball():
-    """ Move ball position according to the current direction"""
-    if game_map.is_direction_changed():
-        shared.direction = (
-            shared.direction[0] + game_map.map_data[shared.ball_yy + shared.direction[0]][
-                shared.ball_xx + shared.direction[1]][0],
-            shared.direction[1] + game_map.map_data[shared.ball_yy + shared.direction[0]][
-                shared.ball_xx + shared.direction[1]][1])
-        print("New direction: {}".format(shared.direction))
-
-    shared.ball_yy += shared.direction[0]
-    shared.ball_xx += shared.direction[1]
 
 
 def move_handles():
@@ -94,7 +82,7 @@ def draw_map():
 def draw_ball():
     pygame.draw.circle(game_display, shared.black,
                        (shared.ball_xx + shared.start_map_x, shared.ball_yy + shared.start_map_y),
-                       5, 5)
+                       shared.ball_size, shared.ball_size)
 
 
 def check_if_exited():
