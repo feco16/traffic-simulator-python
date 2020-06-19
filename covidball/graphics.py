@@ -12,7 +12,8 @@ clock = pygame.time.Clock()
 
 def game_loop():
     """ Loop until the game is exited"""
-    game_map.create_map()
+    # game_map.create_map()
+    game_map.create_obstacles()
 
     while True:
         game_display.fill(shared.green)
@@ -28,8 +29,8 @@ def game_loop():
         if keys[pygame.K_LEFT]:
             button_pressed = True
 
-        move_handles()
-        draw_handles()
+        # move_handles()
+        # draw_handles()
         pygame.display.update()
 
         check_if_exited()

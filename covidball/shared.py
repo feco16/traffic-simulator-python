@@ -8,8 +8,8 @@ start_map_y = 50
 base_width = 12
 
 # ball
-direction = (2, 10)
-ball_yy = 17
+direction = (5, 1)
+ball_yy = 30
 ball_xx = int(columns / 2)
 ball_size = 5
 
